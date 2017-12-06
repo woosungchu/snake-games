@@ -2,15 +2,18 @@ window.onload = function WindowLoad(event) {
 	main();
 }
 
+var container,snake,renderer;
 var UP=0, DOWN=1, LEFT=2, RIGHT=3, SCALE=10; 
 
 function main(){
-	var container = document.getElementById('container');
+	container = document.getElementById('container');
 	snake = new Snake(container);
+	renderer = new Renderer(container,snake);
 }
 
 Snake = function(container){
-	this.snake = null,
+//	this.snake = null,
+	this.keyHandler = new KeyHandler(this);
 	this.timer = new Timer(20),
 	this.snakeParts = [],
 	this.ticks =0,
@@ -23,20 +26,6 @@ Snake = function(container){
 	
 	this.head = new Point();
 	this.cherry = new Point();
-	
-	/*
-    public static Snake snake; 
-	public JFrame jframe;
-	public RenderPanel renderPanel;
-	public Timer timer=new Timer(20,this);
-	public ArrayList<Point> snakeParts=new ArrayList<Point>();
-	public static int UP=0, DOWN=1, LEFT=2, RIGHT=3, SCALE=10;
-	public int ticks=0, direction=DOWN, score, tailLength=10,time=0;
-	public Point head, cherry;
-	public Random random;
-	public boolean over=false, paused ;
-	public Dimension dim;
-	 */
 	
 	this.init = function(container){
 		container.style.width = '800px';
@@ -68,7 +57,77 @@ Snake = function(container){
 	}
 
 	
+	/*
+	 
+	 @Override
+	public void actionPerformed(ActionEvent arg0) {
+		renderPanel.repaint();
+		ticks++;
+		
+		if (ticks % 2 == 0 && head!=null&&!over&&!paused) {
+			time++;
+			snakeParts.add(new Point(head.x, head.y));
+			if (direction == UP)
+				if(head.y -1>=0&&noTailAt(head.x,head.y-1))
+				head=new Point(head.x, head.y - 1);
+				else
+					over=true;
+			if (direction == DOWN)
+				if(head.y +1<67&&noTailAt(head.x,head.y+1))
+				head=new Point(head.x, head.y + 1);
+				else
+					over=true;
+			if (direction == LEFT)
+				if(head.x -1>=0&&noTailAt(head.x-1,head.y))
+				head=new Point(head.x - 1, head.y);
+				else
+					over=true;
+			if (direction == RIGHT)
+				if(head.x +1< 79&&noTailAt(head.x+1,head.y))
+				head=new Point(head.x + 1, head.y);
+				else
+					over=true;
+			if(snakeParts.size()>tailLength)
+				snakeParts.remove(0);
+			if(cherry != null){
+				if(head.equals(cherry)){
+					score+=10;
+					tailLength++;
+					cherry.setLocation(random.nextInt(78), random.nextInt(66));
+				}
+				
+			}
+		}
+	}
+	 */
+	
 	this.init(container);
+}
+
+Renderer = function(container,snake,options){
+	console.log(snake.snakeParts);
+	
+	this.snake = document.createElement('div');
+	this.cherry = document.createElement('div');
+	this.timer = document.createElement('div');
+	
+	this.snake.setAttribute("id", "snake")
+	this.cherry.setAttribute("id", "cherry")
+	this.timer.setAttribute("id", "timer")
+	
+	container.appendChild(this.snake);
+	container.appendChild(this.cherry);
+	container.appendChild(this.timer);
+}
+
+KeyHandler = function(snake){
+	this.snake = snake;
+	
+	this.handler = function(e){
+		console.log(e.key)
+	};
+	
+	window.addEventListener('keydown',this.handler/*,true*/);
 }
 
 Point = function(x,y){
