@@ -6,9 +6,7 @@ var UP=0, DOWN=1, LEFT=2, RIGHT=3, SCALE=10;
 
 function main(){
 	var container = document.getElementById('container');
-	
 	snake = new Snake(container);
-		
 }
 
 Snake = function(container){
@@ -23,6 +21,23 @@ Snake = function(container){
 	this.over = false,
 	this.paused = false;
 	
+	this.head = new Point();
+	this.cherry = new Point();
+	
+	/*
+    public static Snake snake; 
+	public JFrame jframe;
+	public RenderPanel renderPanel;
+	public Timer timer=new Timer(20,this);
+	public ArrayList<Point> snakeParts=new ArrayList<Point>();
+	public static int UP=0, DOWN=1, LEFT=2, RIGHT=3, SCALE=10;
+	public int ticks=0, direction=DOWN, score, tailLength=10,time=0;
+	public Point head, cherry;
+	public Random random;
+	public boolean over=false, paused ;
+	public Dimension dim;
+	 */
+	
 	this.init = function(container){
 		container.style.width = '800px';
 		container.style.height = '700px';
@@ -36,18 +51,6 @@ Snake = function(container){
 		this.direction=DOWN;
 		
 		this.startGame();
-		/*
-		dim=Toolkit.getDefaultToolkit().getScreenSize();
-		jframe=new JFrame("Snake");
-		jframe.setVisible(true);
-		jframe.setSize(800,700);
-		jframe.setResizable(false);
-		jframe.setLocation(dim.width/2-jframe.getWidth()/2, dim.height/2 - jframe.getHeight()/2);
-		jframe.add(renderPanel=new RenderPanel());
-		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jframe.addKeyListener(this);
-		startGame();
-		*/
 	}
 	
 	this.startGame = function(){
@@ -63,25 +66,7 @@ Snake = function(container){
 		}
 		this.timer.start();
 	}
-		
-		
-	
-	/*
-	 
-    public static Snake snake; 
-	public JFrame jframe;
-	public RenderPanel renderPanel;
-	public Timer timer=new Timer(20,this);
-	public ArrayList<Point> snakeParts=new ArrayList<Point>();
-	public static int UP=0, DOWN=1, LEFT=2, RIGHT=3, SCALE=10;
-	public int ticks=0, direction=DOWN, score, tailLength=10,time=0;
-	public Point head, cherry;
-	public Random random;
-	public boolean over=false, paused ;
-	public Dimension dim;
-	  
-	  
-	 */
+
 	
 	this.init(container);
 }
@@ -96,12 +81,9 @@ Timer = function(speed){
 	this.speed= speed;
 	
 	this.start = function(){
-		var inc = 10 * this.speed;
+		var inc = 50 * this.speed;
 		
-		setInterval(function(t){
-			console.log(t)
-			increment(t)
-		},inc);
+		setInterval(increment.bind(this,inc),inc);
 		
 		function increment(val){
 			this.time += val;
