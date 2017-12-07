@@ -16,6 +16,7 @@ function main(){
 Game = function(container){
 	this.container = container;
 	this.snake = null;
+	this.cherry = null;
 	
 	this.keyHandler = new KeyHandler(this);
 	this.timer = new Timer(20);
@@ -24,8 +25,7 @@ Game = function(container){
 	this.time = 0;
 	this.over = false;
 	this.paused = false;
-	this.cherry = new Cherry();
-	this.speed = 0.5;
+	this.speed = 4/10;
 	
 	this.run = function(){
 		this.ticks++;
@@ -44,7 +44,8 @@ Game = function(container){
 	
 	(function start(game){
 		game.snake = new Snake(game.container);
-		setInterval(game.run.bind(game),game.speed * 1000);
+		game.cherry = new Cherry(game.container);
+		setInterval(game.run.bind(game),game.speed * 100);
 	})(this);
 	
 }
@@ -139,49 +140,6 @@ Snake = function(container){
 		snake.move.call(snake);
 	})(this);
 	*/
-	/*
-	 
-	 @Override
-	public void actionPerformed(ActionEvent arg0) {
-		renderPanel.repaint();
-		ticks++;
-		
-		if (ticks % 2 == 0 && head!=null&&!over&&!paused) {
-			time++;
-			snakeParts.add(new Point(head.x, head.y));
-			if (direction == UP)
-				if(head.y -1>=0&&noTailAt(head.x,head.y-1))
-				head=new Point(head.x, head.y - 1);
-				else
-					over=true;
-			if (direction == DOWN)
-				if(head.y +1<67&&noTailAt(head.x,head.y+1))
-				head=new Point(head.x, head.y + 1);
-				else
-					over=true;
-			if (direction == LEFT)
-				if(head.x -1>=0&&noTailAt(head.x-1,head.y))
-				head=new Point(head.x - 1, head.y);
-				else
-					over=true;
-			if (direction == RIGHT)
-				if(head.x +1< 79&&noTailAt(head.x+1,head.y))
-				head=new Point(head.x + 1, head.y);
-				else
-					over=true;
-			if(snakeParts.size()>tailLength)
-				snakeParts.remove(0);
-			if(cherry != null){
-				if(head.equals(cherry)){
-					score+=10;
-					tailLength++;
-					cherry.setLocation(random.nextInt(78), random.nextInt(66));
-				}
-				
-			}
-		}
-	}
-	 */
 	
 }
 
@@ -189,6 +147,7 @@ Cherry = function(container){
 	this.x = null;
 	this.y = null;
 	this.cherry = null;
+	this.container = container;
 	
 	this.create = function(){
 		this.x = getRandomInt(0,limitW);
@@ -202,39 +161,31 @@ Cherry = function(container){
 	}
 	
 	this.draw = function(){
+		var cherry = document.createElement('div');
+		cherry.className = "cherry";
+		cherry.style.left = (this.x * pixelSize) + 'px';
+		cherry.style.top = (this.y * pixelSize) + 'px';
 		
+		this.container.appendChild(cherry);
 	}
 	
 	this.create();
 	
-//	this.cherry = document.createElement('div');
-//	this.cherry.setAttribute("id", "cherry")
-//	container.appendChild(this.cherry);
-	
 };
 
-/*
-Renderer = function(container,snake,options){
-	console.log(snake.snakeParts);
-	
-	this.snake = document.createElement('div');
-	this.cherry = document.createElement('div');
-	this.timer = document.createElement('div');
-	
-	this.snake.setAttribute("id", "snake")
-	this.cherry.setAttribute("id", "cherry")
-	this.timer.setAttribute("id", "timer")
-	
-	container.appendChild(this.snake);
-	container.appendChild(this.cherry);
-	container.appendChild(this.timer);
-}
-*/
-KeyHandler = function(snake){
-	this.snake = snake;
+KeyHandler = function(game){
+	this.game = game;
 	
 	this.handler = function(e){
-		console.log(e.key)
+		if(e.key == 'ArrowDown'){
+			this.game.snake.direction = DOWN;
+		}else if(e.key == 'ArrowRight'){
+			this.game.snake.direction = RIGHT;
+		}else if(e.key == 'ArrowLeft'){
+			this.game.snake.direction = LEFT;
+		}else if(e.key == 'ArrowUp'){
+			this.game.snake.direction = UP;
+		}
 	};
 	
 	window.addEventListener('keydown',this.handler/*,true*/);
