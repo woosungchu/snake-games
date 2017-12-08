@@ -2,16 +2,18 @@ window.onload = function WindowLoad(event) {
 	main();
 }
 
-var container,game;
+var App = {container:null,over:null,paused:null,game:null,keyHandler:null};
 var UP=0, DOWN=1, LEFT=2, RIGHT=3, SCALE=10; 
 var pixelSize = 10;
 var limitH = 78; 
 var limitW = 66;
 
 function main(){
-	console.log('main');
-	container = document.getElementById('container');
-	game = new Game(container);
+	App.container = document.getElementById('container');
+	App.over = document.getElementById('over');    
+	App.paused = document.getElementById('paused');
+	App.game = new Game(container);
+	App.keyHandler = new KeyHandler();
 }
 
 Game = function(container){
@@ -19,7 +21,6 @@ Game = function(container){
 	this.snake = null;
 	this.cherry = null;
 	
-	this.keyHandler = new KeyHandler(this);
 //	this.timer = new Timer(20);
 	this.ticks =0;
 	this.score = 0;
@@ -33,17 +34,36 @@ Game = function(container){
 		if(!this.over && !this.paused){
 			this.ticks++;
 			this.snake.move(this);
-			this.render();
 		}
+		this.render();
 	};
 	
+	this.destroy = function(){
+		clearInterval(this.interval);
+		App.game = null;
+		delete App.game;
+		console.log(App.game);
+	}
+	
 	this.render = function(){
-		while (this.container.firstChild) {
-			this.container.removeChild(this.container.firstChild);
+		if(!this.over && !this.paused){
+			while (this.container.firstChild) {
+				this.container.removeChild(this.container.firstChild);
+			}
+			
+			this.snake && this.snake.draw();
+			this.cherry && this.cherry.draw();
+		}else{
+			console.log(0);
+			if(this.paused && this.container.querySelector('#paused') == null){
+				console.log(1);
+				this.container.appendChild(App.paused);
+			}
+			if(this.over && this.container.querySelector('#over') == null){
+				console.log(2);
+				this.container.appendChild(App.over);
+			}
 		}
-		
-		this.snake && this.snake.draw();
-		this.cherry && this.cherry.draw();
 	};
 	
 	(function start(game){
@@ -172,25 +192,26 @@ Cherry = function(container){
 	
 };
 
-KeyHandler = function(game){
-	this.game = game;
+KeyHandler = function(){
 	
 	this.handler = function(e){
 		if(e.which == 40){
-			this.game.snake.direction = DOWN;
+			App.game.snake.direction = DOWN;
 		}else if(e.which == 39){
-			this.game.snake.direction = RIGHT;
+			App.game.snake.direction = RIGHT;
 		}else if(e.which == 37){
-			this.game.snake.direction = LEFT;
+			App.game.snake.direction = LEFT;
 		}else if(e.which == 38){
-			this.game.snake.direction = UP;
+			App.game.snake.direction = UP;
 		}else if(e.which == 32){//spacebar
-			if(this.game.over) main(); //restart the game
-			else this.game.paused = !this.game.paused;
+			if(App.game.over){
+				App.game.destroy();
+				App.game = new Game(container);
+			}else App.game.paused = !App.game.paused;
 		}
 	};
 	
-	window.addEventListener('keydown',this.handler/*,true*/);
+	window.addEventListener('keydown',this.handler/*.bind(this),true*/);
 }
 
 Point = function(x,y){
