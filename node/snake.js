@@ -21,10 +21,8 @@ Game = function(container){
 	this.snake = null;
 	this.cherry = null;
 	
-//	this.timer = new Timer(20);
 	this.ticks =0;
 	this.score = 0;
-//	this.time = 0;
 	this.over = false;
 	this.paused = false;
 	this.speed = 4/10;
@@ -42,7 +40,16 @@ Game = function(container){
 		clearInterval(this.interval);
 		App.game = null;
 		delete App.game;
-		console.log(App.game);
+	}
+	
+	this.drawScore = function(){
+		var part = document.createElement('div');
+		part.className = "score";
+		part.style.left = ((this.container.offsetWidth / 2) - 10) + 'px';
+		part.style.top = '0px';
+		part.innerText = this.score;
+		
+		this.container.appendChild(part);
 	}
 	
 	this.render = function(){
@@ -53,14 +60,12 @@ Game = function(container){
 			
 			this.snake && this.snake.draw();
 			this.cherry && this.cherry.draw();
+			this.drawScore();
 		}else{
-			console.log(0);
 			if(this.paused && this.container.querySelector('#paused') == null){
-				console.log(1);
 				this.container.appendChild(App.paused);
 			}
 			if(this.over && this.container.querySelector('#over') == null){
-				console.log(2);
 				this.container.appendChild(App.over);
 			}
 		}
@@ -195,13 +200,15 @@ Cherry = function(container){
 KeyHandler = function(){
 	
 	this.handler = function(e){
-		if(e.which == 40){
+		var direction = App.game && App.game.snake.direction;
+		
+		if(e.which == 40 && direction!=UP){
 			App.game.snake.direction = DOWN;
-		}else if(e.which == 39){
+		}else if(e.which == 39 && direction!=LEFT){
 			App.game.snake.direction = RIGHT;
-		}else if(e.which == 37){
+		}else if(e.which == 37 && direction!=RIGHT){
 			App.game.snake.direction = LEFT;
-		}else if(e.which == 38){
+		}else if(e.which == 38 && direction!=DOWN){
 			App.game.snake.direction = UP;
 		}else if(e.which == 32){//spacebar
 			if(App.game.over){
