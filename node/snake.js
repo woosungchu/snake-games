@@ -5,8 +5,8 @@ window.onload = function WindowLoad(event) {
 var App = {container:null,over:null,paused:null,game:null,keyHandler:null};
 var UP=0, DOWN=1, LEFT=2, RIGHT=3, SCALE=10; 
 var pixelSize = 10;
-var limitH = 78; 
-var limitW = 66;
+var limitH = 70; 
+var limitW = 80;
 
 function main(){
 	App.container = document.getElementById('container');
@@ -25,7 +25,7 @@ Game = function(container){
 	this.score = 0;
 	this.over = false;
 	this.paused = false;
-	this.speed = 4/10;
+	this.speed = 2/10;
 	this.interval = null;
 	
 	this.run = function(){
@@ -67,6 +67,7 @@ Game = function(container){
 			}
 			if(this.over && this.container.querySelector('#over') == null){
 				this.container.appendChild(App.over);
+				document.getElementById('final-score').innerText = ' Total Score : ' + this.score
 			}
 		}
 	};
@@ -93,19 +94,19 @@ Snake = function(container){
 			this.snakeParts.push(new Point(this.head.x, this.head.y));
 			// start
 			if (this.direction == UP){
-				if(this.head.y -1>=0&&this.noTailAt(this.head.x,this.head.y-1))
+				if(this.head.y>=0&&this.noTailAt(this.head.x,this.head.y-1))
 					this.head=new Point(this.head.x, this.head.y - 1);
 				else game.over=true;
 			}else if (this.direction == DOWN){
-				if(this.head.y +1< (limitW+1)&&this.noTailAt(this.head.x,this.head.y+1))
+				if(this.head.y< limitH &&this.noTailAt(this.head.x,this.head.y+1))
 					this.head=new Point(this.head.x, this.head.y + 1);
 				else game.over=true;
 			}else if (this.direction == LEFT){
-				if(this.head.x -1>=0&&this.noTailAt(this.head.x-1,this.head.y))
+				if(this.head.x>0&&this.noTailAt(this.head.x-1,this.head.y))
 					this.head=new Point(this.head.x - 1, this.head.y);
 				else game.over=true;
 			}else if (this.direction == RIGHT){
-				if(this.head.x +1< (limitH+1)&&this.noTailAt(this.head.x+1,this.head.y))
+				if(this.head.x< limitW &&this.noTailAt(this.head.x+1,this.head.y))
 					this.head=new Point(this.head.x + 1, this.head.y);
 				else game.over=true;
 			}
