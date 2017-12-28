@@ -5,8 +5,8 @@ window.onload = function WindowLoad(event) {
 var App = {container:null,over:null,paused:null,game:null,keyHandler:null};
 var UP=0, DOWN=1, LEFT=2, RIGHT=3, SCALE=10; 
 var pixelSize = 10;
-var limitH = 70; 
-var limitW = 80;
+var limitH = 69; 
+var limitW = 79;
 
 function main(){
 	App.container = document.getElementById('container');
@@ -25,7 +25,7 @@ Game = function(container){
 	this.score = 0;
 	this.over = false;
 	this.paused = false;
-	this.speed = 2/10;
+	this.speed = 4/10;//do not set higher than 5/10
 	this.interval = null;
 	
 	this.run = function(){
@@ -53,23 +53,28 @@ Game = function(container){
 	}
 	
 	this.render = function(){
-		if(!this.over && !this.paused){
-			while (this.container.firstChild) {
-				this.container.removeChild(this.container.firstChild);
-			}
-			
-			this.snake && this.snake.draw();
-			this.cherry && this.cherry.draw();
-			this.drawScore();
-		}else{
+		while (this.container.firstChild) {
+			this.container.removeChild(this.container.firstChild);
+		}
+		this.snake && this.snake.draw();
+		this.cherry && this.cherry.draw();
+		this.drawScore();
+		
+		if(this.over || this.paused){
 			if(this.paused && this.container.querySelector('#paused') == null){
 				this.container.appendChild(App.paused);
 			}
 			if(this.over && this.container.querySelector('#over') == null){
+				clearInterval(this.interval);
 				this.container.appendChild(App.over);
 				document.getElementById('final-score').innerText = ' Total Score : ' + this.score
 			}
 		}
+		/**
+		 * this.game.over 상태일 때 안그리자니.. 한단계 전에 안보이고
+		 * 그리자니... 넘어가고
+		 */
+		
 	};
 	
 	(function start(game){
@@ -83,33 +88,36 @@ Game = function(container){
 Snake = function(container){
 	this.container = container;
 	this.snakeParts = [];
-	this.direction = DOWN;
 	this.tailLength = 10;
 	this.head = new Point(0,0);
+	this.direction = DOWN;
 	
 	
 	this.move = function(game){
 		if (game && game.ticks % 2 == 0 && this.head!=null&&!game.over&&!game.paused) {
 			
 			this.snakeParts.push(new Point(this.head.x, this.head.y));
+			
 			// start
 			if (this.direction == UP){
-				if(this.head.y>=0&&this.noTailAt(this.head.x,this.head.y-1))
+				if(this.head.y- 1 >= 0&&this.noTailAt(this.head.x,this.head.y-1))
 					this.head=new Point(this.head.x, this.head.y - 1);
-				else game.over=true;
+				else game.over=true;  
 			}else if (this.direction == DOWN){
-				if(this.head.y< limitH &&this.noTailAt(this.head.x,this.head.y+1))
+				if(this.head.y+1<= limitH &&this.noTailAt(this.head.x,this.head.y+1))
 					this.head=new Point(this.head.x, this.head.y + 1);
 				else game.over=true;
 			}else if (this.direction == LEFT){
-				if(this.head.x>0&&this.noTailAt(this.head.x-1,this.head.y))
+				if(this.head.x-1>= 0&&this.noTailAt(this.head.x-1,this.head.y))
 					this.head=new Point(this.head.x - 1, this.head.y);
 				else game.over=true;
 			}else if (this.direction == RIGHT){
-				if(this.head.x< limitW &&this.noTailAt(this.head.x+1,this.head.y))
+				if(this.head.x+1 <= limitW &&this.noTailAt(this.head.x+1,this.head.y))
 					this.head=new Point(this.head.x + 1, this.head.y);
 				else game.over=true;
 			}
+			
+			console.log(this.head.getPoint(), this.direction, game.over)
 			
 			if(this.snakeParts.length > this.tailLength){
 				this.snakeParts.shift();
@@ -228,6 +236,10 @@ Point = function(x,y){
 	
 	this.equals = function(a){
 		return a && a.x == this.x && a.y == this.y;
+	}
+	
+	this.getPoint = function(){
+		return {x:this.x,y:this.y};
 	}
 }
 
