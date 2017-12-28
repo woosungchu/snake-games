@@ -117,8 +117,6 @@ Snake = function(container){
 				else game.over=true;
 			}
 			
-			console.log(this.head.getPoint(), this.direction, game.over)
-			
 			if(this.snakeParts.length > this.tailLength){
 				this.snakeParts.shift();
 			}
