@@ -70,11 +70,6 @@ Game = function(container){
 				document.getElementById('final-score').innerText = ' Total Score : ' + this.score
 			}
 		}
-		/**
-		 * this.game.over 상태일 때 안그리자니.. 한단계 전에 안보이고
-		 * 그리자니... 넘어가고
-		 */
-		
 	};
 	
 	(function start(game){
@@ -238,25 +233,6 @@ Point = function(x,y){
 	
 	this.getPoint = function(){
 		return {x:this.x,y:this.y};
-	}
-}
-
-Timer = function(speed){
-	this.time = 0;
-	this.speed= speed;
-	
-	this.start = function(){
-		var inc = 50 * this.speed;
-		
-		setInterval(increment.bind(this,inc),inc);
-		
-		function increment(val){
-			this.time += val;
-		}
-	}
-	
-	this.getTimer = function(){
-		return this.time;
 	}
 }
 
